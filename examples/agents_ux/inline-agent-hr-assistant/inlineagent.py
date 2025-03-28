@@ -170,7 +170,8 @@ def prepare_request_params(
     end_session: bool = False,
     enable_trace: bool = True,
     access_level: str = "basic",
-    selected_tools: List[str] = None
+    selected_tools: List[str] = None,
+    guardrail_config=None
 ) -> Dict[str, Any]:
     
     # Get allowed action groups based on access level and selected tools
@@ -179,29 +180,33 @@ def prepare_request_params(
     # Generate instruction combining persona tone and tool capabilities
     instruction = generate_instruction(persona_id, selected_tools, foundation_model)
 
-    # Get KB info:
-    if "knowledge_base" in selected_tools:
-        kb_config = configure_knowledge_base(access_level)
-        return {
+    # Determine the model ID first
+    if 'llama3' in foundation_model:
+        # Use the inference profile ID instead of direct model ID
+        model_id = 'us.meta.llama3-3-70b-instruct-v1:0'  # Inference profile ID
+    else:
+        model_id = foundation_model
+
+    #Define the parameters
+    params = {
             "inputText": input_text,
             "instruction": instruction,
-            "foundationModel": foundation_model,
+            "foundationModel": model_id,
             "sessionId": session_id,
             "endSession": end_session,
             "enableTrace": enable_trace,
             "actionGroups": action_groups,
-            "knowledgeBases": [kb_config]
-        }
-    else:
-        return {
-            "inputText": input_text,
-            "instruction": instruction,
-            "foundationModel": foundation_model,
-            "sessionId": session_id,
-            "endSession": end_session,
-            "enableTrace": enable_trace,
-            "actionGroups": action_groups
-        }
+    }
+    # Add guardrail configuration if enabled
+    if guardrail_config:
+        params["guardrailConfiguration"] = guardrail_config
+        
+    # Get KB info:
+    if "knowledge_base" in selected_tools:
+        kb_config = configure_knowledge_base(access_level)
+        params["knowledgeBases"] = [kb_config]
+    
+    return params
 
 def invoke_bedrock_agent(rt_client, request_params: Dict[str, Any]) -> Dict[str, Any]:
     print("invoking-agent")

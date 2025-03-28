@@ -29,7 +29,7 @@ def decode_token(auth_header):
         print(f"Error decoding token: {str(e)}")
         return None
 
-def process_event_stream(query, session_id, session_state, selected_persona, selected_model):
+def process_event_stream(query, session_id, session_state, selected_persona, selected_model, guardrail_config=None):
     try:
         # Prepare request parameters with access level and selected tools
         request_params = prepare_request_params(
@@ -39,7 +39,8 @@ def process_event_stream(query, session_id, session_state, selected_persona, sel
             session_id=session_id,
             enable_trace=True,
             access_level=session_state['sessionAttributes'].get('access_level', 'basic'),
-            selected_tools=session_state['sessionAttributes'].get('selected_tools', [])
+            selected_tools=session_state['sessionAttributes'].get('selected_tools', []),
+            guardrail_config=prepare_guardrail_config(guardrail_config)
         )
         
         # Invoke the agent
@@ -80,6 +81,32 @@ def process_event_stream(query, session_id, session_state, selected_persona, sel
             'message': f'Error: {str(e)}'
         }) + '\n'
 
+def prepare_guardrail_config(guardrail_settings):
+    """Prepare guardrail configuration based on settings"""
+    if not guardrail_settings or not isinstance(guardrail_settings, dict):
+        return None
+    
+    print('********guardrail settings********', guardrail_settings)
+    # Check if guardrails are enabled - default to False if not specified
+    if not guardrail_settings.get('enabled', False):
+        return None
+        
+    guardrail_configs = {
+        'basic': {
+            'guardrailIdentifier': 'opk1gmfanv3o',
+            'guardrailVersion': '1'
+        }
+        # 'strict': {
+        #     'guardrailIdentifier': 'inline-hr-agent-guardrail',
+        #     'guardrailVersion': '1.0'
+        # },
+        # 'custom': {
+        #     'guardrailIdentifier': 'inline-hr-agent-guardrail',
+        #     'guardrailVersion': '1.0'
+        # }
+    }
+    
+    return guardrail_configs.get(guardrail_settings.get('type', 'basic'))
 # Routes
 @app.route('/')
 def index():
@@ -136,10 +163,15 @@ def chat():
         session_id = request.headers.get('Session-ID', '')
         request_body = request.get_json()
         user_message = request_body.get('message')
+        print("Received request_body:", request_body)
         selected_persona = request_body.get('persona', 'peachy')
         selected_model = request_body.get('model')
         selected_tools = request_body.get('tools', [])
         session_id = request_body.get('session')
+        guardrail_config = request_body.get('guardrailConfig', {
+            'enabled': True,  # Default to False
+            'type': 'basic'
+        })
 
         if not user_message:
             return jsonify({'error': 'No message provided'}), 400
@@ -163,7 +195,8 @@ def chat():
                 'access_level': user_data.get('access', 'basic'),
                 'selected_persona': selected_persona,
                 'selected_tools': selected_tools,
-                'selected_model': selected_model
+                'selected_model': selected_model,
+                'guardrail_config': guardrail_config
             }
         }
                 
@@ -175,7 +208,8 @@ def chat():
                     session_id=session_id,
                     session_state=session_state,
                     selected_persona=selected_persona,
-                    selected_model=selected_model
+                    selected_model=selected_model,
+                    guardrail_config=guardrail_config
                 )),
                 mimetype='text/event-stream'
             )

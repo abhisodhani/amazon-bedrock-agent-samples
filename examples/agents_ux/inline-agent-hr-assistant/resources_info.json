@@ -1,0 +1,168 @@
+{
+  "lambda": {
+    "compensation": {
+      "full_response": {
+        "ResponseMetadata": {
+          "RequestId": "57850fb4-0b65-4929-bc29-04d9a5e4965a",
+          "HTTPStatusCode": 201,
+          "HTTPHeaders": {
+            "date": "Fri, 28 Mar 2025 04:43:31 GMT",
+            "content-type": "application/json",
+            "content-length": "1344",
+            "connection": "keep-alive",
+            "x-amzn-requestid": "57850fb4-0b65-4929-bc29-04d9a5e4965a"
+          },
+          "RetryAttempts": 0
+        },
+        "FunctionName": "comp-func-03272143",
+        "FunctionArn": "arn:aws:lambda:us-east-1:947562928956:function:comp-func-03272143",
+        "Runtime": "python3.12",
+        "Role": "arn:aws:iam::947562928956:role/ia-role-03272143",
+        "Handler": "lambda_function.lambda_handler",
+        "CodeSize": 2753,
+        "Description": "",
+        "Timeout": 180,
+        "MemorySize": 128,
+        "LastModified": "2025-03-28T04:43:30.851+0000",
+        "CodeSha256": "fElGh/d12tXmSEKjxgeneOsQBWqlJpGJgoZfQMaEeII=",
+        "Version": "$LATEST",
+        "TracingConfig": {
+          "Mode": "PassThrough"
+        },
+        "RevisionId": "b01bef7e-de05-4834-8e29-7bc2e7a5d49e",
+        "State": "Pending",
+        "StateReason": "The function is being created.",
+        "StateReasonCode": "Creating",
+        "PackageType": "Zip",
+        "Architectures": [
+          "x86_64"
+        ],
+        "EphemeralStorage": {
+          "Size": 512
+        },
+        "SnapStart": {
+          "ApplyOn": "None",
+          "OptimizationStatus": "Off"
+        },
+        "RuntimeVersionConfig": {
+          "RuntimeVersionArn": "arn:aws:lambda:us-east-1::runtime:40d617d2be93996819b6c44f30965daf9adf07d68603c070365dbdc7e1d8db16"
+        },
+        "LoggingConfig": {
+          "LogFormat": "Text",
+          "LogGroup": "/aws/lambda/comp-func-03272143"
+        }
+      }
+    },
+    "vacation": {
+      "full_response": {
+        "ResponseMetadata": {
+          "RequestId": "55e3e768-ecd6-45c5-9aea-ae0862085758",
+          "HTTPStatusCode": 201,
+          "HTTPHeaders": {
+            "date": "Fri, 28 Mar 2025 04:43:31 GMT",
+            "content-type": "application/json",
+            "content-length": "1341",
+            "connection": "keep-alive",
+            "x-amzn-requestid": "55e3e768-ecd6-45c5-9aea-ae0862085758"
+          },
+          "RetryAttempts": 0
+        },
+        "FunctionName": "pto-func-03272143",
+        "FunctionArn": "arn:aws:lambda:us-east-1:947562928956:function:pto-func-03272143",
+        "Runtime": "python3.12",
+        "Role": "arn:aws:iam::947562928956:role/ia-role-03272143",
+        "Handler": "lambda_function.lambda_handler",
+        "CodeSize": 5053,
+        "Description": "",
+        "Timeout": 180,
+        "MemorySize": 128,
+        "LastModified": "2025-03-28T04:43:31.521+0000",
+        "CodeSha256": "yXHOxLx9EHU85ec4F8C8/hqUsAttMXkafLNE1G8FaMM=",
+        "Version": "$LATEST",
+        "TracingConfig": {
+          "Mode": "PassThrough"
+        },
+        "RevisionId": "565a0d95-0ea4-4f0e-91ee-ef696120cb4b",
+        "State": "Pending",
+        "StateReason": "The function is being created.",
+        "StateReasonCode": "Creating",
+        "PackageType": "Zip",
+        "Architectures": [
+          "x86_64"
+        ],
+        "EphemeralStorage": {
+          "Size": 512
+        },
+        "SnapStart": {
+          "ApplyOn": "None",
+          "OptimizationStatus": "Off"
+        },
+        "RuntimeVersionConfig": {
+          "RuntimeVersionArn": "arn:aws:lambda:us-east-1::runtime:40d617d2be93996819b6c44f30965daf9adf07d68603c070365dbdc7e1d8db16"
+        },
+        "LoggingConfig": {
+          "LogFormat": "Text",
+          "LogGroup": "/aws/lambda/pto-func-03272143"
+        }
+      }
+    },
+    "budget": {
+      "full_response": {
+        "ResponseMetadata": {
+          "RequestId": "c4a8b111-4950-4e39-948d-15dfb36fb567",
+          "HTTPStatusCode": 201,
+          "HTTPHeaders": {
+            "date": "Fri, 28 Mar 2025 04:43:32 GMT",
+            "content-type": "application/json",
+            "content-length": "1350",
+            "connection": "keep-alive",
+            "x-amzn-requestid": "c4a8b111-4950-4e39-948d-15dfb36fb567"
+          },
+          "RetryAttempts": 0
+        },
+        "FunctionName": "budget-func-03272143",
+        "FunctionArn": "arn:aws:lambda:us-east-1:947562928956:function:budget-func-03272143",
+        "Runtime": "python3.12",
+        "Role": "arn:aws:iam::947562928956:role/ia-role-03272143",
+        "Handler": "lambda_function.lambda_handler",
+        "CodeSize": 3381,
+        "Description": "",
+        "Timeout": 180,
+        "MemorySize": 128,
+        "LastModified": "2025-03-28T04:43:32.305+0000",
+        "CodeSha256": "n/MMXt3WEK4MrdQcUdQBweb9GdsaB86FUmlj74jW6aY=",
+        "Version": "$LATEST",
+        "TracingConfig": {
+          "Mode": "PassThrough"
+        },
+        "RevisionId": "39195c85-96c5-4241-81ec-50f2ce65d93c",
+        "State": "Pending",
+        "StateReason": "The function is being created.",
+        "StateReasonCode": "Creating",
+        "PackageType": "Zip",
+        "Architectures": [
+          "x86_64"
+        ],
+        "EphemeralStorage": {
+          "Size": 512
+        },
+        "SnapStart": {
+          "ApplyOn": "None",
+          "OptimizationStatus": "Off"
+        },
+        "RuntimeVersionConfig": {
+          "RuntimeVersionArn": "arn:aws:lambda:us-east-1::runtime:40d617d2be93996819b6c44f30965daf9adf07d68603c070365dbdc7e1d8db16"
+        },
+        "LoggingConfig": {
+          "LogFormat": "Text",
+          "LogGroup": "/aws/lambda/budget-func-03272143"
+        }
+      }
+    }
+  },
+  "knowledge_base": {
+    "kb_id": "8CP62A5OU4",
+    "data_source_id": "ZLO39PZDZM",
+    "bucket_name": "inline-agent-kb-032721-032721"
+  }
+}

@@ -498,6 +498,21 @@ body {
                             <option value="anthropic.claude-3-haiku-20240307-v1:0">Anthropic Haiku 3</option>
                         </select>
                     </div>
+                    <!-- Add new Guardrail section -->
+                    <div class="guardrail-section">
+                        <h4>Guardrail Settings</h4>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="guardrailToggle">
+                            <label class="form-check-label" for="guardrailToggle">Enable Guardrails</label>
+                        </div>
+                        <div id="guardrailConfig" class="mt-2">
+                            <select class="form-select" id="guardrailType">
+                                <option value="basic">Basic Guardrails</option>
+                                <option value="strict">Strict Guardrails</option>
+                                <option value="custom">Custom Guardrails</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="customize-section">
                         <br>
                         <br>
@@ -557,6 +572,7 @@ window.onload = () => {
     initializeModelSelection();
     initializeToolAccess();
     startInitialInteraction();
+    initializeGuardrails();
 };
 
 sendButton.addEventListener('click', handleSendMessage);
@@ -584,6 +600,57 @@ document.getElementById('applyTools').addEventListener('click', function() {
     localStorage.setItem('selectedTools', JSON.stringify(selectedTools));
     displayTraceMessage(`Tools configuration updated: ${selectedTools.join(', ')}`, 'fa-tools');
 });
+
+function initializeGuardrails() {
+    // Get guardrail elements
+    const guardrailToggle = document.getElementById('guardrailToggle');
+    const guardrailConfig = document.getElementById('guardrailConfig');
+    const guardrailType = document.getElementById('guardrailType');
+    
+    // Set initial state based on checkbox (default to true on first load)
+    if (localStorage.getItem('guardrailsEnabled') === null) {
+        localStorage.setItem('guardrailsEnabled', 'true');
+    }
+    
+    // Set the toggle based on localStorage
+    guardrailToggle.checked = localStorage.getItem('guardrailsEnabled') === 'true';
+    
+    // Show/hide config based on toggle state
+    guardrailConfig.style.display = guardrailToggle.checked ? 'block' : 'none';
+    
+    // Set guardrail type from localStorage or default to 'basic'
+    const savedGuardrailType = localStorage.getItem('guardrailType') || 'basic';
+    guardrailType.value = savedGuardrailType;
+    
+    // Add event listeners with immediate console output for debugging
+    guardrailToggle.addEventListener('change', function() {
+        const isEnabled = this.checked;
+        localStorage.setItem('guardrailsEnabled', isEnabled);
+        guardrailConfig.style.display = isEnabled ? 'block' : 'none';
+        
+        console.log("Guardrails enabled changed to:", isEnabled);
+        console.log("localStorage guardrailsEnabled:", localStorage.getItem('guardrailsEnabled'));
+        
+        displayTraceMessage(
+            isEnabled ? "Guardrails enabled" : "Guardrails disabled", 
+            'fa-shield-alt'
+        );
+    });
+    
+    guardrailType.addEventListener('change', function() {
+        localStorage.setItem('guardrailType', this.value);
+        console.log("Guardrail type changed to:", this.value);
+        console.log("localStorage guardrailType:", localStorage.getItem('guardrailType'));
+        
+        displayTraceMessage("Guardrail type changed to: " + this.value, 'fa-shield-alt');
+    });
+
+    // Add this at the end of your initializeGuardrails function
+    window.setTimeout(() => {
+        console.log("On page load - Guardrail toggle state:", document.getElementById('guardrailToggle').checked);
+        console.log("On page load - localStorage guardrailsEnabled:", localStorage.getItem('guardrailsEnabled'));
+    }, 1000);
+}
 
 function initializeSessionControl() {
     const endSessionBtn = document.getElementById('endSessionBtn');
@@ -744,6 +811,14 @@ async function sendToAPI(message) {
         const selectedPersona = document.getElementById('personaSelect').value;
         const selectedModel = document.getElementById('modelSelect').value;
         const selectedTools = JSON.parse(localStorage.getItem('selectedTools') || '[]');
+
+        // Get guardrail settings directly from the DOM elements
+        const guardrailsEnabled = document.getElementById('guardrailToggle').checked;
+        const guardrailType = document.getElementById('guardrailType').value;
+        
+        // Debug logging
+        console.log("Before API call - Guardrails enabled:", guardrailsEnabled);
+        console.log("Before API call - Guardrail type:", guardrailType);
         
         const response = await fetch('/chat', {
             method: 'POST',
@@ -759,7 +834,11 @@ async function sendToAPI(message) {
                 persona: selectedPersona,
                 model: selectedModel,
                 tools: selectedTools,
-                session: currentSession
+                session: currentSession,
+                guardrailConfig: {
+                enabled: guardrailsEnabled,
+                type: guardrailType
+            }
             })
         });
 
@@ -964,6 +1043,32 @@ function initializeUserDetails() {
     document.getElementById('welcomeUserName').textContent = `Welcome, ${userName}`;
     document.getElementById('employeeIdDisplay').innerHTML = 
         `Employee ID: ${employeeId}<br>Access: ${access || 'Not Specified'}`;
+}
+// Add Guardrail handling
+document.getElementById('guardrailToggle').addEventListener('change', function() {
+    const configSection = document.getElementById('guardrailConfig');
+    configSection.style.display = this.checked ? 'block' : 'none';
+    updateChatSettings();
+});
+
+document.getElementById('guardrailType').addEventListener('change', function() {
+    updateChatSettings();
+});
+
+// Update the existing updateChatSettings function
+function updateChatSettings() {
+    const settings = {
+        persona: document.getElementById('personaSelect').value,
+        model: document.getElementById('modelSelect').value,
+        guardrailEnabled: document.getElementById('guardrailToggle').checked,
+        guardrailType: document.getElementById('guardrailType').value
+    };
+    
+    // Store settings in session storage
+    sessionStorage.setItem('chatSettings', JSON.stringify(settings));
+    
+    // Update the chat configuration
+    updateChatConfiguration(settings);
 }
  </script>
 
