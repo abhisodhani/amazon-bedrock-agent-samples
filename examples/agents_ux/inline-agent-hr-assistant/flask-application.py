@@ -31,6 +31,7 @@ def decode_token(auth_header):
 
 def process_event_stream(query, session_id, session_state, selected_persona, selected_model, guardrail_config=None):
     try:
+        print("Session state:", session_state)
         # Prepare request parameters with access level and selected tools
         request_params = prepare_request_params(
             input_text=query,
@@ -41,8 +42,10 @@ def process_event_stream(query, session_id, session_state, selected_persona, sel
             access_level=session_state['sessionAttributes'].get('access_level', 'basic'),
             selected_tools=session_state['sessionAttributes'].get('selected_tools', []),
             guardrail_config=prepare_guardrail_config(guardrail_config)
+            # session_state=session_state
         )
         
+        # print('********request_params********', request_params)
         # Invoke the agent
         response = bedrock_client.invoke_inline_agent(**request_params)
         
@@ -86,7 +89,7 @@ def prepare_guardrail_config(guardrail_settings):
     if not guardrail_settings or not isinstance(guardrail_settings, dict):
         return None
     
-    print('********guardrail settings********', guardrail_settings)
+    # print('********guardrail settings********', guardrail_settings)
     # Check if guardrails are enabled - default to False if not specified
     if not guardrail_settings.get('enabled', False):
         return None
@@ -163,7 +166,7 @@ def chat():
         session_id = request.headers.get('Session-ID', '')
         request_body = request.get_json()
         user_message = request_body.get('message')
-        print("Received request_body:", request_body)
+        # print("Received request_body:", request_body)
         selected_persona = request_body.get('persona', 'peachy')
         selected_model = request_body.get('model')
         selected_tools = request_body.get('tools', [])
@@ -184,8 +187,8 @@ def chat():
         if not user_data:
             return jsonify({'error': 'Invalid token'}), 401
 
-        if not session_id:
-            session_id = str(uuid.uuid4())
+        # if not session_id:
+        session_id = str(uuid.uuid4())
 
         # Create session state with all necessary information
         session_state = {
@@ -197,6 +200,7 @@ def chat():
                 'selected_tools': selected_tools,
                 'selected_model': selected_model,
                 'guardrail_config': guardrail_config
+                , 'query': user_message
             }
         }
                 
